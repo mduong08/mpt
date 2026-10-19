@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dương Yêu Thảo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, #ffe4e6 0%, #fbcfe8 50%, #fff1f2 100%);
+      min-height: 100vh;
+    }
+
+    .font-handwriting {
+      font-family: 'Dancing Script', cursive;
+    }
+
+    .font-romantic {
+      font-family: 'Great Vibes', cursive;
+    }
+
+    /* Falling Petals Background Animation */
+    .petal {
+      position: fixed;
+      top: -10%;
+      pointer-events: none;
+      z-index: 1;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg) translateX(0);
+        opacity: 0.9;
+      }
+      50% {
+        transform: translateY(50vh) rotate(180deg) translateX(50px);
+      }
+      100% {
+        transform: translateY(105vh) rotate(360deg) translateX(-30px);
+        opacity: 0.1;
+      }
+    }
+
+    /* Twinkling Stars */
+    .star {
+      position: fixed;
+      background-color: #ffffff;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: twinkle ease-in-out infinite alternate;
+      z-index: 1;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.2; transform: scale(0.8); }
+      100% { opacity: 0.9; transform: scale(1.4); }
+    }
+
+    /* Pulse Glow for Start Button */
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.5); }
+      70% { box-shadow: 0 0 0 22px rgba(244, 63, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+    }
+
+    .pulse-btn {
+      animation: pulseGlow 2.2s infinite;
+    }
+
+    /* Envelope Styling */
+    .envelope-box {
+      position: relative;
+      width: 320px;
+      height: 220px;
+      background: #fca5a5;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      box-shadow: 0 25px 40px rgba(225, 29, 72, 0.2);
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    @media (min-width: 640px) {
+      .envelope-box {
+        width: 400px;
+        height: 270px;
+      }
+    }
+
+    .envelope-box:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 30px 50px rgba(225, 29, 72, 0.3);
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 160px solid transparent;
+      border-right: 160px solid transparent;
+      border-top: 135px solid #f87171;
+      transform-origin: top;
+      transition: transform 0.5s ease;
+      z-index: 3;
+    }
+
+    @media (min-width: 640px) {
+      .envelope-flap {
+        border-left-width: 200px;
+        border-right-width: 200px;
+        border-top-width: 160px;
+      }
+    }
+
+    .envelope-box.open .envelope-flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .envelope-pocket {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 160px solid #fca5a5;
+      border-right: 160px solid #fca5a5;
+      border-bottom: 120px solid #f87171;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      z-index: 2;
+    }
+
+    @media (min-width: 640px) {
+      .envelope-pocket {
+        border-left-width: 200px;
+        border-right-width: 200px;
+        border-bottom-width: 145px;
+      }
+    }
+
+    .wax-seal {
+      position: absolute;
+      top: 105px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 56px;
+      height: 56px;
+      background: radial-gradient(circle, #e11d48 0%, #9f1239 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fef08a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.4);
+      z-index: 4;
+      transition: opacity 0.3s ease;
+    }
+
+    @media (min-width: 640px) {
+      .wax-seal {
+        top: 125px;
+        width: 64px;
+        height: 64px;
+      }
+    }
+
+    /* Typewriter Cursor */
+    .typing-cursor::after {
+      content: '|';
+      animation: blink 0.7s infinite;
+      color: #e11d48;
+      font-weight: bold;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Custom Scrollbar for Large Letter */
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #fce7f3;
+      border-radius: 10px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #f43f5e;
+      border-radius: 10px;
+    }
+
+    /* Floating Heart Effect */
+    .floating-heart {
+      position: absolute;
+      animation: floatUpHeart 3s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatUpHeart {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      50% { opacity: 0.9; }
+      100% { transform: translateY(-70px) scale(1.2); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="relative flex items-center justify-center min-h-screen p-4 sm:p-6 overflow-x-hidden">
+
+  <!-- Background Elements (Petals & Stars) -->
+  <div id="petals-container"></div>
+  <div id="stars-container"></div>
+
+  <!-- Music Toggle Floating Button -->
+  <button id="music-btn" onclick="toggleMusic()" class="fixed top-5 right-5 z-50 bg-white/80 backdrop-blur-md p-3.5 rounded-full shadow-lg text-rose-500 hover:text-rose-600 hover:scale-110 active:scale-95 transition-all duration-300">
+    <i id="music-icon" class="fas fa-music text-lg sm:text-xl"></i>
+  </button>
+
+  <!-- MAIN CONTAINER -->
+  <main class="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-center justify-center">
+
+    <!-- 1. START SCREEN -->
+    <section id="start-screen" class="flex flex-col items-center text-center space-y-6 transition-all duration-700">
+      <div class="space-y-3 max-w-lg">
+        <span class="inline-flex items-center px-4 py-1.5 bg-rose-100 text-rose-600 rounded-full text-xs sm:text-sm font-bold tracking-wider uppercase shadow-sm">
+          <i class="fas fa-heart text-rose-500 mr-2"></i> Dành Riêng Cho Em
+        </span>
+        <h1 class="text-4xl sm:text-6xl font-bold font-romantic text-rose-600 drop-shadow-sm leading-tight">
+          Gửi Em 
+        </h1>
+        <h1 class="text-4xl sm:text-6xl font-bold font-romantic text-rose-600 drop-shadow-sm leading-tight">
+          Mai Phương Thảo 
+        </h1>
+        <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+          Hong có gì đâu đừng có ấn zô cái nút nghen !!
+        </p>
+      </div>
+
+      <button onclick="goToEnvelopeScreen()" class="pulse-btn relative group px-8 py-4 bg-gradient-to-r from-rose-400 via-pink-500 to-rose-500 text-white font-bold text-base sm:text-lg rounded-full shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition duration-300 flex items-center space-x-3">
+        <i class="fas fa-envelope-open-text text-xl group-hover:rotate-12 transition-transform duration-300"></i>
+        <span>'Cái Nút'</span>
+        <i class="fas fa-sparkles text-yellow-300"></i>
+      </button>
+    </section>
+
+    <!-- 2. ENVELOPE / MAILBOX SCREEN -->
+    <section id="envelope-screen" class="hidden flex-col items-center justify-center transition-all duration-700 space-y-8">
+      <div class="text-center space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-bold text-rose-600 font-romantic">Bạn có 1 bức thư mới!</h2>
+        <p class="text-gray-500 text-xs sm:text-sm">Nhấn zô lá thư iiii</p>
+      </div>
+
+      <!-- Envelope Container -->
+      <div id="envelope-box" onclick="openLetterExperience()" class="envelope-box">
+        <div class="envelope-flap"></div>
+        <div class="wax-seal">
+          <i class="fas fa-heart text-xl sm:text-2xl"></i>
+        </div>
+        <div class="envelope-pocket"></div>
+      </div>
+    </section>
+
+    <!-- 3. MAIN EXPERIENCE DISPLAY: LARGE LETTER ON LEFT + GITHUB PHOTO ON RIGHT -->
+    <section id="experience-screen" class="hidden w-full transition-all duration-1000 opacity-0 transform translate-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full">
+
+        <!-- LEFT COLUMN: LARGE LETTER CARD -->
+        <div class="lg:col-span-7 bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-2xl border border-pink-100 relative overflow-hidden flex flex-col justify-between min-h-[480px] sm:min-h-[540px]">
+          
+          <!-- Decorative Top Bar -->
+          <div class="flex items-center justify-between border-b border-rose-100 pb-4 mb-4">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 bg-rose-400 rounded-full inline-block"></span>
+              <span class="w-3 h-3 bg-pink-300 rounded-full inline-block"></span>
+              <span class="w-3 h-3 bg-rose-200 rounded-full inline-block"></span>
+            </div>
+            <span class="text-xs font-bold uppercase tracking-widest text-rose-400">Thư Tềnh</span>
+          </div>
+
+          <!-- Letter Content Container -->
+          <div class="my-auto py-2 custom-scroll max-h-[380px] overflow-y-auto pr-2">
+            <h3 class="text-2xl sm:text-3xl font-bold text-rose-600 font-handwriting mb-4">
+              Gửi vợ tương lai của tuôi,
+            </h3>
+
+            <!-- TYPEWRITER TEXT CONTENT -->
+            <p id="typewriter-text" class="text-gray-700 text-base sm:text-lg leading-relaxed font-handwriting font-semibold whitespace-pre-line typing-cursor"></p>
+          </div>
+
+          <!-- Letter Footer / Signature -->
+          <div id="letter-footer" class="opacity-0 transition-opacity duration-1000 pt-4 border-t border-rose-100 flex items-center justify-between mt-4">
+            <span class="text-xs text-gray-400">From Trương Minh Dương with ❤️</span>
+            <span class="text-2xl sm:text-3xl font-bold font-romantic text-rose-600">Thương gửi!</span>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: GITHUB PHOTO DISPLAY -->
+        <div class="lg:col-span-5 flex flex-col items-center justify-center relative">
+          
+          <div id="bouquet-wrapper" class="relative w-full max-w-sm sm:max-w-md transform scale-90 opacity-0 transition-all duration-1000 delay-300">
+            
+            <!-- Glow background behind Photo Card -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-rose-300/50 via-pink-200/50 to-amber-100/50 rounded-3xl blur-2xl pointer-events-none"></div>
+
+            <!-- Main Photo Container from GitHub -->
+            <div class="relative z-10 bg-white p-3 sm:p-4 rounded-3xl shadow-2xl border-4 border-white/80 group">
+              <div class="overflow-hidden rounded-2xl max-h-[420px] flex items-center justify-center bg-rose-50">
+                <img id="github-photo" src="" alt="Hình Kỷ Niệm" class="w-full h-auto object-cover rounded-2xl transform group-hover:scale-105 transition-transform duration-500">
+              </div>
+              <div class="text-center mt-3 pb-1">
+                <span class="font-handwriting text-rose-500 font-bold text-xl sm:text-2xl">Forever with you ❤️</span>
+              </div>
+            </div>
+
+            <!-- Floating Hearts Over Photo -->
+            <div class="floating-heart text-rose-500 text-2xl -left-4 top-10" style="animation-delay: 0s;"><i class="fas fa-heart"></i></div>
+            <div class="floating-heart text-pink-400 text-3xl -right-4 top-20" style="animation-delay: 1.2s;"><i class="fas fa-heart"></i></div>
+            <div class="floating-heart text-rose-600 text-xl left-1/2 -top-6" style="animation-delay: 2.1s;"><i class="fas fa-heart"></i></div>
+          </div>
+          
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // -------------------------------------------------------------
+    // 1. DÁN LINK ĐƯỜNG DẪN ẢNH GITHUB CỦA BẠN VÀO ĐÂY:
+    // -------------------------------------------------------------
+    const myImageFromGithub = 'https://raw.githubusercontent.com/mduong08/mpt/refs/heads/main/1792396580536_276974146987285284_7119486943865057073_3b8d22c6b6cefb03f6069173698115b0.jpg';
+
+    // Letter Text to be typed
+    const letterText = `Chào em, Mai Phương Thảo!
+    Bức thư này anh viết cho em, người con gái đã đồng hành cùng anh qua những năm tháng vừa qua, dù thời gian qua chúng ta có những mâu thuẫn, trắc trở nhưng anh vẫn luôn trân trọng và trân quý những phút giây có em bên cạnh.
+    Nhân ngày 20/10 - ngày Phụ Nữ Việt Nam. Anh chúc em luôn đẹp gái, vui vẻ, hạnh phúc và học siu giỏi, gặp được nhiêu may mắn và thành công hơn trong mọi việc, ăn đủ bữa, ngủ đủ giấc, khỏe mạnh và bình an.
+    Anh mong chúng ta luôn bên nhau, iu thương nhau, đồng hành và trưởng thành cùng nhau, à nhớ iu anh nhiều hơn nữa nghenn. I love you so muchhhhhhhhh ❤️
+    `; 
+
+    let audioCtx = null;
+    let isMusicPlaying = false;
+    let typingIndex = 0;
+    let typingTimer = null;
+
+    // Load GitHub Image into Photo Card
+    function loadGithubPhoto() {
+      const imgElement = document.getElementById('github-photo');
+      if (imgElement) {
+        imgElement.src = myImageFromGithub;
+      }
+    }
+
+    // Create Background Effects
+    function initBackground() {
+      // Create Falling Petals
+      const petalsContainer = document.getElementById('petals-container');
+      const petalColors = ['#f472b6', '#fb7185', '#f43f5e', '#fda4af'];
+      
+      for (let i = 0; i < 20; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+        petal.style.left = `${Math.random() * 100}vw`;
+        petal.style.animationDuration = `${6 + Math.random() * 7}s`;
+        petal.style.animationDelay = `${Math.random() * 5}s`;
+        
+        const size = 12 + Math.random() * 14;
+        petal.style.width = `${size}px`;
+        petal.style.height = `${size * 1.4}px`;
+        petal.style.backgroundColor = petalColors[Math.floor(Math.random() * petalColors.length)];
+        petal.style.borderRadius = '50% 0 50% 50%';
+        
+        petalsContainer.appendChild(petal);
+      }
+
+      // Create Twinkling Stars
+      const starsContainer = document.getElementById('stars-container');
+      for (let i = 0; i < 35; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = `${Math.random() * 100}vw`;
+        star.style.top = `${Math.random() * 100}vh`;
+        
+        const size = 2 + Math.random() * 3;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.animationDuration = `${1.5 + Math.random() * 2}s`;
+        star.style.animationDelay = `${Math.random() * 3}s`;
+
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // Screen Navigation: Start -> Envelope Screen
+    function goToEnvelopeScreen() {
+      const startScreen = document.getElementById('start-screen');
+      const envelopeScreen = document.getElementById('envelope-screen');
+
+      startScreen.classList.add('opacity-0', '-translate-y-8');
+      
+      setTimeout(() => {
+        startScreen.classList.add('hidden');
+        envelopeScreen.classList.remove('hidden');
+        envelopeScreen.classList.add('flex');
+      }, 500);
+
+      startRomanticMusic();
+    }
+
+    // Trigger Petal & Confetti Explosion
+    function triggerPetalExplosion() {
+      const duration = 2.5 * 1000;
+      const animationEnd = Date.now() + duration;
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 40 * (timeLeft / duration);
+
+        confetti({
+          particleCount,
+          startVelocity: 30,
+          spread: 360,
+          origin: { x: Math.random(), y: Math.random() - 0.2 },
+          colors: ['#e11d48', '#f43f5e', '#fb7185', '#fbcfe8', '#fef08a']
+        });
+      }, 250);
+    }
+
+    // Open Letter Experience
+    function openLetterExperience() {
+      const envelopeBox = document.getElementById('envelope-box');
+      const envelopeScreen = document.getElementById('envelope-screen');
+      const experienceScreen = document.getElementById('experience-screen');
+      const bouquetWrapper = document.getElementById('bouquet-wrapper');
+
+      // 1. Open Flap
+      envelopeBox.classList.add('open');
+
+      // 2. Trigger Petal Confetti
+      triggerPetalExplosion();
+
+      // 3. Fade out & hide Envelope Screen after 600ms
+      setTimeout(() => {
+        envelopeScreen.classList.add('opacity-0', 'scale-90');
+        
+        setTimeout(() => {
+          envelopeScreen.classList.add('hidden');
+          envelopeScreen.classList.remove('flex');
+
+          // 4. Show Experience Screen (Letter Left + Photo Right)
+          experienceScreen.classList.remove('hidden');
+          setTimeout(() => {
+            experienceScreen.classList.remove('opacity-0', 'translate-y-8');
+            experienceScreen.classList.add('opacity-100', 'translate-y-0');
+
+            // Show Photo with smooth scale up
+            bouquetWrapper.classList.remove('scale-90', 'opacity-0');
+            bouquetWrapper.classList.add('scale-100', 'opacity-100');
+
+            // Start Typewriter effect for letter text
+            startTypewriter();
+          }, 100);
+
+        }, 600);
+      }, 700);
+    }
+
+    // Typewriter Effect Logic
+    function startTypewriter() {
+      const textContainer = document.getElementById('typewriter-text');
+      const letterFooter = document.getElementById('letter-footer');
+
+      textContainer.textContent = '';
+      typingIndex = 0;
+
+      function typeChar() {
+        if (typingIndex < letterText.length) {
+          textContainer.textContent += letterText.charAt(typingIndex);
+          typingIndex++;
+          typingTimer = setTimeout(typeChar, 38); // Typing speed
+        } else {
+          // Remove blinking cursor when done
+          textContainer.classList.remove('typing-cursor');
+          
+          // Show footer
+          letterFooter.classList.remove('opacity-0');
+        }
+      }
+
+      typeChar();
+    }
+
+    // Soft Romantic Piano Music Generator (Web Audio API)
+    function startRomanticMusic() {
+      if (isMusicPlaying) return;
+
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+
+        // Soft Piano Chords Sequence (Frequency in Hz)
+        const chordNotes = [
+          [261.63, 329.63, 392.00], // C major
+          [220.00, 261.63, 329.63], // A minor
+          [174.61, 220.00, 261.63], // F major
+          [196.00, 246.94, 293.66]  // G major
+        ];
+
+        let chordIndex = 0;
+
+        function playChord() {
+          if (!audioCtx || audioCtx.state === 'closed') return;
+
+          const currentChord = chordNotes[chordIndex % chordNotes.length];
+          
+          currentChord.forEach((freq) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'triangle'; // Soft sound
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 3.5);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 3.5);
+          });
+
+          chordIndex++;
+        }
+
+        setInterval(playChord, 2200);
+        isMusicPlaying = true;
+        document.getElementById('music-icon').classList.add('animate-spin');
+      } catch (e) {
+        console.log("Audio API blocked or not supported.");
+      }
+    }
+
+    // Music Toggle Button
+    function toggleMusic() {
+      if (!audioCtx) {
+        startRomanticMusic();
+      } else if (audioCtx.state === 'running') {
+        audioCtx.suspend();
+        isMusicPlaying = false;
+        document.getElementById('music-icon').classList.remove('animate-spin');
+      } else if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+        isMusicPlaying = true;
+        document.getElementById('music-icon').classList.add('animate-spin');
+      }
+    }
+
+    // Initialize on page load
+    window.onload = function() {
+      initBackground();
+      loadGithubPhoto();
+    };
+  </script>
+</body>
+</html>
